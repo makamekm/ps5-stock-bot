@@ -26,7 +26,7 @@ Alternatively you can run in bash:
 
 `export DROPBOX_KEY=...`
 
-## Run production
+## Production
 
 `npm run build`
 
