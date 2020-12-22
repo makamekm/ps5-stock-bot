@@ -12,4 +12,5 @@ export const TELEGRAM_BOT_KEY = process.env.TELEGRAM_BOT_KEY;
 export const DROPBOX_KEY = process.env.DROPBOX_KEY;
 export const DROPBOX_CACHE_TTL = 1000 * 60 * 60 * 24;
 export const ADMIN_USERNAMES = ["maximkarpov"];
+export const ADMIN_CHATIDS = [453569878];
 export const SHOW_LOCAL = true;

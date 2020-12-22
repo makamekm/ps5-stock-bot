@@ -138,18 +138,6 @@ export class TelegramFetchService {
     ];
   }
 
-  proxyFailStr = [
-    "The requested URL could not be retrieved",
-    "GATEWAY_TIMEOUT",
-    "The request could not be satisfied.",
-    "Cache Access Denied.",
-    "Server dropped connection.",
-  ];
-
-  isProxyFailStr(text: string) {
-    return this.proxyFailStr.find((s) => text.includes(s)) != null;
-  }
-
   async fetch(
     data: {
       url: string;
@@ -157,7 +145,7 @@ export class TelegramFetchService {
       useProxy?: boolean;
     },
     tryCount = 4
-  ): Promise<[Response, string]> {
+  ): Promise<string> {
     let url = data.url;
     let authority = data.authority || "www.amazon.com";
     if (data.useProxy) {
@@ -172,17 +160,7 @@ export class TelegramFetchService {
         );
       }
       const text = await res.text();
-      // if (this.isProxyFailStr(text)) {
-      //   throw new Error(
-      //     "Fail to fetch (PROXY GET ACCESS): " +
-      //       url +
-      //       " with status: " +
-      //       res.status +
-      //       " using proxy: " +
-      //       proxy
-      //   );
-      // }
-      return [res, text];
+      return text;
     } catch (error) {
       if (data.useProxy) {
         if (tryCount > 0) {

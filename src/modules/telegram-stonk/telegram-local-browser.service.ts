@@ -6,7 +6,7 @@ import { BrowserCookieSessionService } from "./browser-cookie-session.service";
 import { USER_FOLDER } from "@env/config";
 
 @Injectable()
-export class TelegramStonkBrowserDevService {
+export class TelegramLocalBrowserService {
   constructor(
     private browserCookieSessionService: BrowserCookieSessionService
   ) {}
