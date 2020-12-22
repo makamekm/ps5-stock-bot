@@ -1,5 +1,5 @@
 {
-  "name": "ps5-stock-bot",
+  "name": "ps5-poland-stock-bot",
   "version": "0.0.1",
   "description": "",
   "author": "makamekm",
@@ -48,7 +48,6 @@
     "dropbox-v2-api": "^2.4.32",
     "lodash": "^4.17.20",
     "mysql": "^2.18.1",
-    "nest-status-monitor": "^0.1.4",
     "nestjs-telegraf": "^1.3.1",
     "nestjs-telegram": "^1.1.2",
     "next": "^10.0.0",
