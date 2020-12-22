@@ -11,7 +11,7 @@
     "build:api": "nest build",
     "build:ui": "next build",
     "build-tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.generated.css",
-    "exec": "cross-env ENV=prod NODE_ENV=production node -r ./tsconfig-paths-bootstrap.js -r ts-node/register ./src/main.ts",
+    "exec": "cross-env ENV=prod NODE_ENV=production node -r dotenv/config -r ./tsconfig-paths-bootstrap.js -r ts-node/register ./src/main.ts",
     "format": "prettier --write \"src/**/*.{tsx,ts,js,jsx}\" \"test/**/*.ts\"",
     "start:dev": "nodemon --watch src -e ts --exec \"npm run start:dev:raw || exit 1\"",
     "start:dev:raw": "cross-env ENV=dev node -r dotenv/config -r ./tsconfig-paths-bootstrap.js -r ts-node/register ./src/main.ts",
