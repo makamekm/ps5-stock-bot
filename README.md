@@ -35,3 +35,13 @@ Alternatively you can run in bash:
 ## Development
 
 `npm run start:dev`
+
+## Cloud
+
+`NPM_CONFIG_PRODUCTION=false`
+
+`ENV=prod`
+
+`TELEGRAM_BOT_KEY=...`
+
+`DROPBOX_KEY=...`
