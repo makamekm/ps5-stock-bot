@@ -145,7 +145,7 @@ export class TelegramFetchService {
       useProxy?: boolean;
     },
     tryCount = 4
-  ): Promise<[Response, string]> {
+  ): Promise<string> {
     let url = data.url;
     let authority = data.authority || "www.amazon.com";
     if (data.useProxy) {
@@ -160,7 +160,7 @@ export class TelegramFetchService {
         );
       }
       const text = await res.text();
-      return [res, text];
+      return text;
     } catch (error) {
       if (data.useProxy) {
         if (tryCount > 0) {
