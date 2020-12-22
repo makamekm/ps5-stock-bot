@@ -19,6 +19,7 @@ import { USER_FOLDER } from "@env/config";
 import { TelegramFetchService } from "./telegram-fetch.service";
 import { LimitCron } from "./limit-cron.decorator";
 import { ActionWithData } from "./telegram-action.decorator";
+import { availibilityScenarious } from "./availability.scenarious";
 
 @Injectable()
 export class TelegramScraperService {
@@ -339,361 +340,38 @@ ${url}
     return (this.warnTime[name] = Number.NEGATIVE_INFINITY);
   }
 
-  @Cron("*/60 * * * * *")
+  @Cron("*/30 * * * * *")
   @LimitCron
-  async handleAmazonPS5DigitalCron() {
-    const url =
-      "https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H97NYGP/?th=1";
-    try {
-      // const text = await this.telegramFetchService.fetch({
-      //   url,
-      //   // useProxy: true,
-      // });
-      const text = await this.pupToText(url);
-      const $ = cheerio.load(text);
-
-      if ($("#productTitle").length === 0) {
-        // if (
-        //   !text.includes(
-        //     "An error occurred when we tried to process your request"
-        //   ) &&
-        //   !text.includes("Type the characters you see in this image:")
-        // ) {
-        //   this.notifyWithMessage("Failed to fetch: PS5 Digital Amazon!", url);
-        // }
-        if (!text.includes("Type the characters you see in this image:")) {
-          console.log("PS5 Digital Amazon", $("body")?.first()?.text());
+  async availibilityScenariousJob() {
+    for (const script of availibilityScenarious) {
+      try {
+        let text = "";
+        if (script.usePuppeteer) {
+          text = await this.pupToText(script.url);
         } else {
-          console.log(
-            "PS5 Digital Amazon requires to type the characters you see in this image"
-          );
+          text = await this.telegramFetchService.fetch({
+            url: script.url,
+            useProxy: script.useProxy,
+          });
         }
-      } else if ($("#add-to-cart-button").length !== 0) {
-        if (this.canWarn("amazon_digital-avail")) {
-          this.setWarn("amazon_digital-avail");
-          const aw = $("#availability")?.first()?.text()?.trim();
-          this.notifyWithMessage("PS5 Digital Amazon is awailable! " + aw, url);
-        }
-        console.log("PS5 Digital Amazon - YES");
-      } else {
-        this.unsetWarn("amazon_digital-avail");
-        console.log("PS5 Digital Amazon - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("amazon_digital")) {
-      //   this.setWarn("amazon_digital");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 Digital Amazon! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 Digital Amazon", error.message);
-      console.error(error);
-    }
+        const $ = cheerio.load(text);
 
-    // const [isAwailable, button] = await this.isAmazonAwailable(url);
-    // if (isAwailable && button) {
-    //   this.notifyWithMessage("PS5 Digital AMAZON is awailable!", url);
-    // }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleAmazonPS5Cron() {
-    const url =
-      "https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H95Y452/";
-    try {
-      const text = await this.pupToText(url);
-      // const text = await this.telegramFetchService.fetch({
-      //   url,
-      //   // useProxy: true,
-      // });
-      const $ = cheerio.load(text);
-
-      if ($("#productTitle").length === 0) {
-        // if (
-        //   !text.includes(
-        //     "An error occurred when we tried to process your request"
-        //   ) &&
-        //   !text.includes("Type the characters you see in this image:")
-        // ) {
-        //   this.notifyWithMessage("Failed to fetch: PS5 Amazon!", url);
-        // }
-        if (!text.includes("Type the characters you see in this image:")) {
-          console.log("PS5 Amazon", $("body")?.first()?.text());
+        if (!script.checkCorrectness($, text)) {
+          throw new Error("Correctness failed!");
+        } else if (script.checkMatch($, text)) {
+          if (this.canWarn(script.name + "-avail")) {
+            this.setWarn(script.name + "-avail");
+            this.notifyWithMessage(script.name + " is awailable!", script.url);
+          }
+          console.log(script.name + " - YES");
         } else {
-          console.log(
-            "PS5 Amazon requires to type the characters you see in this image"
-          );
+          this.unsetWarn(script.name + "-avail");
+          console.log(script.name + " - NO");
         }
-      } else if ($("#add-to-cart-button").length !== 0) {
-        if (this.canWarn("amazon-avail")) {
-          this.setWarn("amazon-avail");
-          const aw = $("#availability")?.first()?.text()?.trim();
-          this.notifyWithMessage("PS5 Amazon is awailable! " + aw, url);
-        }
-        console.log("PS5 Amazon - YES");
-      } else {
-        this.unsetWarn("amazon-avail");
-        console.log("PS5 Amazon - NO");
+      } catch (error) {
+        console.error(script.name, error.message);
+        console.error(error);
       }
-    } catch (error) {
-      // if (this.canWarn("amazon")) {
-      //   this.setWarn("amazon");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 Amazon! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 Amazon", error.message);
-      console.error(error);
-    }
-
-    // const [isAwailable, button] = await this.isAmazonAwailable(url);
-    // if (isAwailable && button) {
-    //   this.notifyWithMessage("PS5 AMAZON is awailable!", url);
-    // }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleMediaexpertPS5Cron() {
-    const url =
-      "https://www.mediaexpert.pl/gaming/playstation-5/konsole-ps5/konsola-sony-ps5";
-    try {
-      const text = await this.telegramFetchService.fetch({ url });
-      const $ = cheerio.load(text);
-
-      if ($(".is-productName").length === 0) {
-        console.log("PS5 MEDIAEXPERT", $("body")?.first()?.text());
-      } else if ($('[data-label="Do koszyka"]').length !== 0) {
-        if (this.canWarn("mediaexpert-avail")) {
-          this.setWarn("mediaexpert-avail");
-          this.notifyWithMessage("PS5 MEDIAEXPERT is awailable!", url);
-        }
-        console.log("PS5 MEDIAEXPERT - YES");
-      } else {
-        this.unsetWarn("mediaexpert-avail");
-        console.log("PS5 MEDIAEXPERT - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("mediaexpert")) {
-      //   this.setWarn("mediaexpert");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 MEDIAEXPERT! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 MEDIAEXPERT", error.message);
-      console.error(error);
-    }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleMediaexpertPS5DigitalCron() {
-    const url =
-      "https://www.mediaexpert.pl/gaming/playstation-5/konsole-ps5/konsola-sony-ps5-digital";
-    try {
-      const text = await this.telegramFetchService.fetch({ url });
-      const $ = cheerio.load(text);
-
-      if ($(".is-productName").length === 0) {
-        console.log("PS5 Digital MEDIAEXPERT", $("body")?.first()?.text());
-      } else if ($('[data-label="Do koszyka"]').length !== 0) {
-        if (this.canWarn("mediaexpert_digital-avail")) {
-          this.setWarn("mediaexpert_digital-avail");
-          this.notifyWithMessage("PS5 Digital MEDIAEXPERT is awailable!", url);
-        }
-        console.log("PS5 Digital MEDIAEXPERT - YES");
-      } else {
-        this.unsetWarn("mediaexpert_digital-avail");
-        console.log("PS5 Digital MEDIAEXPERT - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("mediaexpert_digital")) {
-      //   this.setWarn("mediaexpert_digital");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 Digital MEDIAEXPERT! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 Digital MEDIAEXPERT", error.message);
-      console.error(error);
-    }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleXKOMPS5DigitalCron() {
-    const url =
-      "https://www.x-kom.pl/p/592843-konsola-playstation-sony-playstation-5-digital.html";
-    try {
-      const text = await this.telegramFetchService.fetch({ url });
-
-      if (!text.includes("Playstation")) {
-        this.notifyWithMessage("Failed to fetch: PS5 Digital XKOM!", url);
-      } else if (text.includes("Dodaj do koszyka")) {
-        if (this.canWarn("xkom_digital-avail")) {
-          this.setWarn("xkom_digital-avail");
-          this.notifyWithMessage("PS5 Digital XKOM is awailable!", url);
-        }
-        console.log("PS5 Digital XKOM - YES");
-      } else {
-        this.unsetWarn("xkom_digital-avail");
-        console.log("PS5 Digital XKOM - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("xkom_digital")) {
-      //   this.setWarn("xkom_digital");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 Digital XKOM! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 Digital XKOM", error.message);
-      console.error(error);
-    }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleXKOMPS5Cron() {
-    const url =
-      "https://www.x-kom.pl/p/577878-konsola-playstation-sony-playstation-5.html";
-    try {
-      const text = await this.telegramFetchService.fetch({ url });
-
-      if (!text.includes("Playstation")) {
-        this.notifyWithMessage("Failed to fetch: PS5 XKOM!", url);
-      } else if (text.includes("Dodaj do koszyka")) {
-        if (this.canWarn("xkom-avail")) {
-          this.setWarn("xkom-avail");
-          this.notifyWithMessage("PS5 XKOM is awailable!", url);
-        }
-        console.log("PS5 XKOM - YES");
-      } else {
-        this.unsetWarn("xkom-avail");
-        console.log("PS5 XKOM - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("xkom")) {
-      //   this.setWarn("xkom");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 XKOM! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 XKOM", error.message);
-      console.error(error);
-    }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleMediamarktPS5Cron() {
-    const url =
-      "https://mediamarkt.pl/konsole-i-gry/konsola-sony-playstation-5";
-    try {
-      const text = await this.pupToText(url);
-      // const text = await this.telegramFetchService.fetch({
-      //   url,
-      //   authority: "www.mediamarkt.pl",
-      //   // useProxy: true,
-      // });
-      const $ = cheerio.load(text);
-
-      if ($(".b-ofr_headDataTitle").length === 0) {
-        console.log("PS5 MEDIAMARKT", $("body")?.first()?.text());
-      } else if ($("#js-addToCart").length !== 0) {
-        if (this.canWarn("mediamarkt-avail")) {
-          this.setWarn("mediamarkt-avail");
-          this.notifyWithMessage("PS5 MEDIAMARKT is awailable!", url);
-        }
-        console.log("PS5 MEDIAMARKT - YES");
-      } else {
-        this.unsetWarn("mediamarkt-avail");
-        console.log("PS5 MEDIAMARKT - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("mediamarkt")) {
-      //   this.setWarn("mediamarkt");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 MEDIAMARKT! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 MEDIAMARKT", error.message);
-      console.error(error);
-    }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleEUROCOMPLPS5DigitalCron() {
-    const url =
-      "https://m.euro.com.pl/konsole-playstation-5/sony-konsola-playstation-5-edycja-digital-ps5.bhtml";
-    try {
-      const text = await this.telegramFetchService.fetch({ url });
-      const $ = cheerio.load(text);
-
-      if ($(".product-header").length === 0) {
-        console.log("PS5 Digital EUROCOMPL", $("body")?.first()?.text());
-      } else if ($(".add-to-cart").length !== 0) {
-        if (this.canWarn("eurocompl_digital-avail")) {
-          this.setWarn("eurocompl_digital-avail");
-          this.notifyWithMessage("PS5 Digital EUROCOMPL is awailable!", url);
-        }
-        console.log("PS5 Digital EUROCOMPL - YES");
-      } else {
-        this.unsetWarn("eurocompl_digital-avail");
-        console.log("PS5 Digital EUROCOMPL - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("eurocompl_digital")) {
-      //   this.setWarn("eurocompl_digital");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 Digital EUROCOMPL! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 Digital EUROCOMPL", error.message);
-      console.error(error);
-    }
-  }
-
-  @Cron("*/60 * * * * *")
-  @LimitCron
-  async handleEUROCOMPLPS5Cron() {
-    const url =
-      "https://m.euro.com.pl/konsole-playstation-5/sony-konsola-playstation-5-ps5-blu-ray-4k.bhtml";
-    try {
-      const text = await this.telegramFetchService.fetch({ url });
-      const $ = cheerio.load(text);
-
-      if ($(".product-header").length === 0) {
-        // this.notifyWithMessage("Failed to fetch: PS5 MEDIAEXPERT!", url);
-        console.log("PS5 EUROCOMPL", $("body")?.first()?.text());
-      } else if ($(".add-to-cart").length !== 0) {
-        if (this.canWarn("eurocompl-avail")) {
-          this.setWarn("eurocompl-avail");
-          this.notifyWithMessage("PS5 EUROCOMPL is awailable!", url);
-        }
-        console.log("PS5 EUROCOMPL - YES");
-      } else {
-        this.unsetWarn("eurocompl-avail");
-        console.log("PS5 EUROCOMPL - NO");
-      }
-    } catch (error) {
-      // if (this.canWarn("eurocompl")) {
-      //   this.setWarn("eurocompl");
-      //   this.notifyWithMessage(
-      //     "Failed to fetch: PS5 EUROCOMPL! " + error.message,
-      //     url
-      //   );
-      // }
-      console.error("PS5 EUROCOMPL", error.message);
-      console.error(error);
     }
   }
 }
