@@ -1,6 +1,5 @@
 import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
 import { ServeStaticModule } from "@nestjs/serve-static";
-import { TransactionModule } from "./modules/transaction/transaction.module";
 import { PUBLIC_FOLDER } from "@env/config";
 import { NextMiddleware, NextModule } from "@nestpress/next";
 import { NextController } from "./next.controller";
@@ -62,7 +61,6 @@ const port = Number(process.env.PORT) || 5000;
       // exclude: ["/api/*"],
     }),
     ScheduleModule.forRoot(),
-    TransactionModule,
     TelegramStonkModule,
   ],
   controllers: [NextController],

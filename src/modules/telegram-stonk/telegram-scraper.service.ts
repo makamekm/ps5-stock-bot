@@ -14,16 +14,14 @@ import {
   deleteMenuFromContext,
   createBackMainMenuButtons,
 } from "telegraf-inline-menu";
-import {
-  ActionWithData,
-  TelegramActionService,
-} from "./telegram-action.service";
+import { TelegramActionService } from "./telegram-action.service";
 import { USER_FOLDER } from "@env/config";
 import { TelegramFetchService } from "./telegram-fetch.service";
 import { LimitCron } from "./limit-cron.decorator";
+import { ActionWithData } from "./telegram-action.decorator";
 
 @Injectable()
-export class TelegramStonkScreenshotService {
+export class TelegramScraperService {
   constructor(
     @InjectBot() private bot: TelegrafProvider,
     private browserCookieSessionService: BrowserCookieSessionService,

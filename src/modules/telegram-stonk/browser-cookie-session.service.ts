@@ -49,7 +49,7 @@ export class BrowserCookieSessionService {
     return true;
   }
 
-  @Command("cleandropboxcookiessessioncache")
+  @Command("cleancookiessessioncache")
   @OnlyAdmins
   async cleanCookieCache(ctx: Context) {
     this.lastReadCookieSessionFromDropbox = Number.NEGATIVE_INFINITY;
@@ -119,7 +119,7 @@ export class BrowserCookieSessionService {
     );
   }
 
-  @Command("cleandropboxsessioncache")
+  @Command("cleansessioncache")
   @OnlyAdmins
   async cleanCache(ctx: Context) {
     this.lastReadSessionFromDropbox = Number.NEGATIVE_INFINITY;

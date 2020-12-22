@@ -91,12 +91,12 @@ export class TelegramStonkService {
         description: "Check Amazon PS5 Digital Awailability",
       },
       {
-        command: "cleandropboxsessioncache",
-        description: "Clean Dropbox Session Cache",
+        command: "cleansessioncache",
+        description: "Clean Session Cache",
       },
       {
-        command: "cleandropboxcookiessessioncache",
-        description: "Clean Dropbox Cookie Session Cache",
+        command: "cleancookiessessioncache",
+        description: "Clean Cookie Session Cache",
       },
       ...(SHOW_LOCAL
         ? [

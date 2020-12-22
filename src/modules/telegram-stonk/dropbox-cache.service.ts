@@ -78,7 +78,6 @@ export class DropboxCacheService {
     }
 
     if (fs.existsSync(localPath)) {
-      // rimraf.sync(localPath);
       fs.rmdirSync(localPath, { recursive: true });
     }
 
