@@ -15,15 +15,21 @@ Then just provide the collected data to the environment.
 
 You can create a file `.env` with the next lines:
 
-`TELEGRAM_BOT_KEY=... DROPBOX_KEY=...`
+`TELEGRAM_BOT_KEY=...
+
+DROPBOX_KEY=...`
 
 Alternatively you can run in bash:
 
-`export TELEGRAM_BOT_KEY=... export DROPBOX_KEY=...`
+`export TELEGRAM_BOT_KEY=...
+
+export DROPBOX_KEY=...`
 
 ## Run production
 
-`npm run build npm start`
+`npm run build
+
+npm start`
 
 ## Development
 
