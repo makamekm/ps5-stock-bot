@@ -180,7 +180,7 @@ ${url}
   async getPage(browser: pup.Browser, url: string) {
     const page = await browser.newPage();
     await page.goto(url, {
-      timeout: 10000,
+      timeout: 30000,
     });
 
     const hasRestoredSessionCookies = await this.browserCookieSessionService.restoreCookieSession(
