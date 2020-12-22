@@ -8,7 +8,8 @@ This bot checks availability of PS5 in Poland online markets and sends Telegram 
 
 ## Environments
 
-Firstly, you need to create a Telegram bot following to Telegram API rules
+Firstly, you need to create a Telegram bot following to Telegram API rules.
+
 Secondly, you need to create a DROPBOX KEY to store information about user sessions.
 
 Then just provide the collected data to the environment.
