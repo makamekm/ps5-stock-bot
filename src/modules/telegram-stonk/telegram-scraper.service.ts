@@ -110,6 +110,45 @@ ${url}
     );
   }
 
+  @Command("check")
+  @OnlyAdmins
+  async screenshot(ctx: Context) {
+    try {
+      for (const script of availibilityScenarious) {
+        if (script.name !== ctx.contextState?.command?.args) {
+          continue;
+        }
+
+        await this.pupPage(script.url, async (page) => {
+          const text = await page.content();
+          const $ = cheerio.load(text);
+          const type = script.name.includes("Amazon") ? "amazon" : null;
+
+          if (!script.checkCorrectness($, text)) {
+            await this.notifyWithMessage(script.name + " failed!", script.url);
+            await this.replyWithMenu(script.url, ctx, type);
+          } else if (script.checkMatch($, text)) {
+            await this.notifyWithMessage(
+              script.name + " is available!",
+              script.url
+            );
+            await this.replyWithMenu(script.url, ctx, type);
+          } else {
+            await this.notifyWithMessage(
+              script.name + " is out of stock!",
+              script.url
+            );
+            await this.replyWithMenu(script.url, ctx, type);
+          }
+        });
+      }
+    } catch (error) {
+      await this.telegramStonkService.notifyAllSubscribers(
+        "Failed to do anything due to:\n" + error.message
+      );
+    }
+  }
+
   @Command("amazonps5")
   @OnlyAdmins
   async checkAwailabilityOnAmazonPS5(ctx: Context) {
@@ -230,6 +269,40 @@ ${url}
       return false;
     } finally {
       await browser.close();
+    }
+  }
+
+  async pupPage(
+    url: string,
+    callback: (page: pup.Page) => Promise<void>
+  ): Promise<void> {
+    const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
+
+    if (!hasRestoredSession) {
+      console.error("Failed to restore the browser session!");
+      throw new Error("Failed to restore the browser session!");
+    }
+
+    let browser: pup.Browser;
+
+    try {
+      browser = await puppeteer.use(StealthPlugin()).launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        defaultViewport: {
+          width: 1024,
+          height: 1024,
+        },
+        userDataDir: USER_FOLDER,
+      });
+      const page = await this.getPage(browser, url);
+      await callback(page);
+    } catch (e) {
+      console.error(e);
+      throw e;
+    } finally {
+      if (browser != null) {
+        await browser.close();
+      }
     }
   }
 
@@ -363,7 +436,7 @@ ${url}
         } else if (script.checkMatch($, text)) {
           if (this.canWarn(script.name + "-avail")) {
             this.setWarn(script.name + "-avail");
-            this.notifyWithMessage(script.name + " is awailable!", script.url);
+            this.notifyWithMessage(script.name + " is available!", script.url);
           }
           console.log(script.name + " - YES");
         } else {
