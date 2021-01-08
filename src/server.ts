@@ -23,7 +23,7 @@ export async function bootstrapAPI() {
       },
     })
     .then(() => {
-      app.listen(port, () => {
+      app.listen(port, process.env.HOST || "0.0.0.0", () => {
         console.log("Server is listening...", port);
       });
     });
