@@ -1,6 +1,8 @@
 import * as path from "path";
 
 export const CORS = true;
+export const WEB_SERVER_PORT = process.env.PORT || 5000;
+export const WEB_SERVER_HOST = process.env.HOST || "0.0.0.0";
 export const PUBLIC_FOLDER = path.resolve("./public");
 export const USER_FOLDER = path.resolve("./user_data");
 export const TEMP_FOLDER = path.resolve("./temp_data");
@@ -14,3 +16,4 @@ export const DROPBOX_CACHE_TTL = 1000 * 60 * 60 * 24;
 export const ADMIN_USERNAMES = ["maximkarpov"];
 export const ADMIN_CHATIDS = [453569878];
 export const SHOW_LOCAL = true;
+export const BROWSER_PATH = process.env.BROWSER || undefined;
