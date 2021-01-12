@@ -1,12 +1,12 @@
 import { NestFactory } from "@nestjs/core";
 import * as path from "path";
 import { AppModule } from "./app.module";
-import { CORS } from "@env/config";
+import { CORS, WEB_SERVER_PORT, WEB_SERVER_HOST } from "@env/config";
 import { NextModule } from "@nestpress/next";
 
 export async function bootstrapAPI() {
   const app = await NestFactory.create(AppModule, { cors: CORS });
-  const port = process.env.PORT || 5000;
+  const port = WEB_SERVER_PORT;
 
   app
     .get(NextModule)
@@ -23,7 +23,7 @@ export async function bootstrapAPI() {
       },
     })
     .then(() => {
-      app.listen(port, () => {
+      app.listen(port, WEB_SERVER_HOST, () => {
         console.log("Server is listening...", port);
       });
     });
