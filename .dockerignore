@@ -1,7 +1,7 @@
 /node_modules
 /dist
-database.sqlite
-demo-nest-api
+/database.sqlite
+/demo-nest-api
 /.next
 /user_data
 /temp_data

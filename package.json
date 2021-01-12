@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "clean": "rimraf dist demo-nest-api",
-    "release": "docker buildx build --platform linux/arm/v7 -t makame/ps5-stonk-bot:latest .",
+    "release": "docker buildx build --platform linux/arm/v7 -t makame/ps5-stonk-bot:latest --push .",
     "build": "run-p build:ui build:api",
     "build:api": "nest build",
     "build:ui": "next build",
