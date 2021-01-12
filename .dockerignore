@@ -1,1 +1,10 @@
-**/node_modules
+/node_modules
+/dist
+database.sqlite
+demo-nest-api
+/.next
+/user_data
+/temp_data
+/cookies.json
+.env
+/tmp.zip
