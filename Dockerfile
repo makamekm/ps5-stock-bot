@@ -1,9 +1,10 @@
 FROM arm32v7/node
-RUN apt-get install chromium-browser --yes
+RUN apt-get update
+RUN apt-get install chromium --yes
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN NPM_CONFIG_PRODUCTION=false npm install
+RUN NPM_CONFIG_PRODUCTION=false PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true npm install
 COPY . .
 RUN npm build
-ENV BROWSER=chromium-browser
+ENV BROWSER=chromium
 CMD [ "npm", "run", "start" ]
