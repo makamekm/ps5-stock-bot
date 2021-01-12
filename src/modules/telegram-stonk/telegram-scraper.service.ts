@@ -15,7 +15,7 @@ import {
   createBackMainMenuButtons,
 } from "telegraf-inline-menu";
 import { TelegramActionService } from "./telegram-action.service";
-import { USER_FOLDER, BROWSER_PATH } from "@env/config";
+import { USER_FOLDER, BROWSER_PATH, BROWSER_ARGS } from "@env/config";
 import { TelegramFetchService } from "./telegram-fetch.service";
 import { LimitCron } from "./limit-cron.decorator";
 import { ActionWithData } from "./telegram-action.decorator";
@@ -244,7 +244,7 @@ ${url}
 
     const browser = await puppeteer.use(StealthPlugin()).launch({
       executablePath: BROWSER_PATH,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: BROWSER_ARGS,
       defaultViewport: {
         width: 1024,
         height: 1024,
@@ -289,7 +289,7 @@ ${url}
     try {
       browser = await puppeteer.use(StealthPlugin()).launch({
         executablePath: BROWSER_PATH,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: BROWSER_ARGS,
         defaultViewport: {
           width: 1024,
           height: 1024,
@@ -321,7 +321,7 @@ ${url}
     try {
       browser = await puppeteer.use(StealthPlugin()).launch({
         executablePath: BROWSER_PATH,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: BROWSER_ARGS,
         defaultViewport: {
           width: 1024,
           height: 1024,
@@ -352,7 +352,7 @@ ${url}
 
     const browser = await puppeteer.use(StealthPlugin()).launch({
       executablePath: BROWSER_PATH,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: BROWSER_ARGS,
       defaultViewport: {
         width: 1024,
         height: 1024,

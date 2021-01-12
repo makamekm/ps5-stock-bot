@@ -1,4 +1,5 @@
 import * as path from "path";
+import os from "os";
 
 export const CORS = false;
 export const WEB_SERVER_PORT = process.env.PORT || 8080;
@@ -17,4 +18,21 @@ export const DROPBOX_CACHE_TTL = 1000 * 60 * 60 * 24;
 export const ADMIN_USERNAMES = ["maximkarpov"];
 export const ADMIN_CHATIDS = [453569878];
 export const SHOW_LOCAL = false;
-export const BROWSER_PATH = process.env.BROWSER || undefined;
+export const BROWSER_PATH =
+  process.env.BROWSER || (os.arch() === "arm" ? "chromium" : undefined);
+export const BROWSER_ARGS = [
+  "--no-sandbox",
+  "--disable-setuid-sandbox",
+  // RASPBERRY
+  ...(os.arch() === "arm"
+    ? [
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+        "--disable-setuid-sandbox",
+        "--no-first-run",
+        "--no-sandbox",
+        "--no-zygote",
+        "--single-process",
+      ]
+    : []),
+];
