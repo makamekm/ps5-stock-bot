@@ -45,3 +45,7 @@ Alternatively you can run in bash:
 `TELEGRAM_BOT_KEY=...`
 
 `DROPBOX_KEY=...`
+
+## Build Docker for Raspberry PI
+
+`docker buildx build --platform linux/arm/v7 -t makame/ps5-stonk-bot:latest --push .`
