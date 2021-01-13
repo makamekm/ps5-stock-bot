@@ -224,6 +224,7 @@ export class TelegramStonkService {
         try {
           await this.bot.telegram.sendMessage(chatId, message);
         } catch (error) {
+          console.debug(error, chatId);
           // Suspend error
         }
       })
@@ -248,6 +249,7 @@ export class TelegramStonkService {
               })
             : await this.bot.telegram.sendMessage(chatId, message);
         } catch (error) {
+          console.debug(error, chatId);
           // Suspend error
         }
       })
