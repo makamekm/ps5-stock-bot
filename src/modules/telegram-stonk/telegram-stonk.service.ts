@@ -130,10 +130,10 @@ export class TelegramStonkService {
   }
 
   @Start()
-  start(ctx: Context) {
+  async start(ctx: Context) {
     if (!this.chatIds.includes(ctx.chat.id)) {
       this.chatIds.push(ctx.chat.id);
-      this.saveSubscriptions();
+      await this.saveSubscriptions();
     }
     ctx.reply(
       "You have subscribed to the PS5 Stock Alert Notifications. You will be informed when it will become available."
@@ -141,11 +141,11 @@ export class TelegramStonkService {
   }
 
   @Command("stop")
-  stop(ctx: Context) {
+  async stop(ctx: Context) {
     var chatIdIndex = this.chatIds.indexOf(ctx.chat.id);
     if (chatIdIndex >= 0) {
       this.chatIds.splice(chatIdIndex, 1);
-      this.saveSubscriptions();
+      await this.saveSubscriptions();
     }
     ctx.reply("Bye!");
   }
@@ -218,12 +218,19 @@ export class TelegramStonkService {
   //   this.notifyAllSubscribers("Hello There!");
   // }
 
-  reflect(promise: Promise<any>): Promise<any> {
+  reflect(promise: Promise<any>, chatid: number): Promise<any> {
     return promise.then(
       (data) => {
         return data;
       },
       (error) => {
+        if (error?.code === 403) {
+          var chatIdIndex = this.chatIds.indexOf(chatid);
+          if (chatIdIndex >= 0) {
+            this.chatIds.splice(chatIdIndex, 1);
+            this.saveSubscriptions();
+          }
+        }
         console.debug(error);
         return error;
       }
@@ -233,7 +240,7 @@ export class TelegramStonkService {
   async notifyAllSubscribers(message: string) {
     await Promise.all(
       this.chatIds.map((chatId) =>
-        this.reflect(this.bot.telegram.sendMessage(chatId, message))
+        this.reflect(this.bot.telegram.sendMessage(chatId, message), chatId)
       )
     );
   }
@@ -254,7 +261,8 @@ export class TelegramStonkService {
                 },
                 parse_mode: "Markdown",
               })
-            : this.bot.telegram.sendMessage(chatId, message)
+            : this.bot.telegram.sendMessage(chatId, message),
+          chatId
         )
       )
     );
