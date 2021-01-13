@@ -218,13 +218,23 @@ export class TelegramStonkService {
   //   this.notifyAllSubscribers("Hello There!");
   // }
 
+  reflect(promise: Promise<any>): Promise<any> {
+    return promise.then(
+      (data) => {
+        return data;
+      },
+      (error) => {
+        console.debug(error);
+        return error;
+      }
+    );
+  }
+
   async notifyAllSubscribers(message: string) {
     await Promise.all(
-      this.chatIds.map(async (chatId) => {
-        await this.bot.telegram
-          .sendMessage(chatId, message)
-          .catch((error) => console.debug(error, chatId));
-      })
+      this.chatIds.map((chatId) =>
+        this.reflect(this.bot.telegram.sendMessage(chatId, message))
+      )
     );
   }
 
@@ -234,20 +244,23 @@ export class TelegramStonkService {
     onlyAdmins = true
   ) {
     await Promise.all(
-      this.chatIds.map(async (chatId) => {
-        !onlyAdmins || ADMIN_CHATIDS.find((id) => id === Number(chatId)) != null
-          ? await this.bot.telegram
-              .sendMessage(chatId, message, {
-                reply_markup: {
-                  inline_keyboard: keyboard,
-                },
-                parse_mode: "Markdown",
-              })
-              .catch((error) => console.debug(error, chatId))
-          : await this.bot.telegram
-              .sendMessage(chatId, message)
-              .catch((error) => console.debug(error, chatId));
-      })
+      this.chatIds.map((chatId) =>
+        this.reflect(
+          !onlyAdmins ||
+            ADMIN_CHATIDS.find((id) => id === Number(chatId)) != null
+            ? this.bot.telegram
+                .sendMessage(chatId, message, {
+                  reply_markup: {
+                    inline_keyboard: keyboard,
+                  },
+                  parse_mode: "Markdown",
+                })
+                .catch((error) => console.debug(error, chatId))
+            : this.bot.telegram
+                .sendMessage(chatId, message)
+                .catch((error) => console.debug(error, chatId))
+        )
+      )
     );
   }
 }
