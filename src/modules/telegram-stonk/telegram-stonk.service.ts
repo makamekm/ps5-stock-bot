@@ -59,6 +59,10 @@ export class TelegramStonkService {
         description: "Start listening for notifications",
       },
       {
+        command: "status",
+        description: "Check subscription status",
+      },
+      {
         command: "stop",
         description: "Stop listening for notifications",
       },
@@ -148,6 +152,16 @@ export class TelegramStonkService {
       await this.saveSubscriptions();
     }
     ctx.reply("Bye!");
+  }
+
+  @Command("status")
+  async status(ctx: Context) {
+    var chatIdIndex = this.chatIds.indexOf(ctx.chat.id);
+    if (chatIdIndex >= 0) {
+      ctx.reply("You are subscribed!");
+    } else {
+      ctx.reply("You are not subscribed!");
+    }
   }
 
   @Command("restart")
