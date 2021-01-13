@@ -226,8 +226,8 @@ export class TelegramStonkService {
         } catch (error) {
           console.debug(error, chatId);
           // Suspend error
-          return Promise.resolve;
         }
+        return Promise.resolve;
       })
     );
   }
@@ -252,8 +252,8 @@ export class TelegramStonkService {
         } catch (error) {
           console.debug(error, chatId);
           // Suspend error
-          return Promise.resolve;
         }
+        return Promise.resolve;
       })
     );
   }
