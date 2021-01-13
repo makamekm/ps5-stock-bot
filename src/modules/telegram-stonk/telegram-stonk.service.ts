@@ -248,17 +248,13 @@ export class TelegramStonkService {
         this.reflect(
           !onlyAdmins ||
             ADMIN_CHATIDS.find((id) => id === Number(chatId)) != null
-            ? this.bot.telegram
-                .sendMessage(chatId, message, {
-                  reply_markup: {
-                    inline_keyboard: keyboard,
-                  },
-                  parse_mode: "Markdown",
-                })
-                .catch((error) => console.debug(error, chatId))
-            : this.bot.telegram
-                .sendMessage(chatId, message)
-                .catch((error) => console.debug(error, chatId))
+            ? this.bot.telegram.sendMessage(chatId, message, {
+                reply_markup: {
+                  inline_keyboard: keyboard,
+                },
+                parse_mode: "Markdown",
+              })
+            : this.bot.telegram.sendMessage(chatId, message)
         )
       )
     );
