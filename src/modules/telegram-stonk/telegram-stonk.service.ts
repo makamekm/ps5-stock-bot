@@ -88,18 +88,18 @@ export class TelegramStonkService {
               command: "cleancookiessessioncache",
               description: "Clean Cookie Session Cache",
             },
-            {
-              command: "amazonorders",
-              description: "Check Amazon Orders",
-            },
-            {
-              command: "amazonps5",
-              description: "Check Amazon PS5 Awailability",
-            },
-            {
-              command: "amazonps5digital",
-              description: "Check Amazon PS5 Digital Awailability",
-            },
+            // {
+            //   command: "amazonorders",
+            //   description: "Check Amazon Orders",
+            // },
+            // {
+            //   command: "amazonps5",
+            //   description: "Check Amazon PS5 Awailability",
+            // },
+            // {
+            //   command: "amazonps5digital",
+            //   description: "Check Amazon PS5 Digital Awailability",
+            // },
             {
               command: "localstart",
               description: "Start local browser",

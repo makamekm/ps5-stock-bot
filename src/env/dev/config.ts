@@ -34,3 +34,4 @@ export const BROWSER_ARGS = [
       ]
     : []),
 ];
+export const BROWSER_URL = process.env.BROWSER_URL;

@@ -15,7 +15,12 @@ import {
   createBackMainMenuButtons,
 } from "telegraf-inline-menu";
 import { TelegramActionService } from "./telegram-action.service";
-import { USER_FOLDER, BROWSER_PATH, BROWSER_ARGS } from "@env/config";
+import {
+  USER_FOLDER,
+  BROWSER_PATH,
+  BROWSER_ARGS,
+  BROWSER_URL,
+} from "@env/config";
 import { TelegramFetchService } from "./telegram-fetch.service";
 import { LimitCron } from "./limit-cron.decorator";
 import { ActionWithData } from "./telegram-action.decorator";
@@ -25,7 +30,7 @@ import { availibilityScenarious } from "./availability.scenarious";
 export class TelegramScraperService {
   constructor(
     @InjectBot() private bot: TelegrafProvider,
-    private browserCookieSessionService: BrowserCookieSessionService,
+    // private browserCookieSessionService: BrowserCookieSessionService,
     private telegramStonkService: TelegramStonkService,
     private telegramActionService: TelegramActionService,
     private telegramFetchService: TelegramFetchService
@@ -43,23 +48,23 @@ export class TelegramScraperService {
       },
     });
 
-    const submenu = new MenuTemplate<Context>("Do you want to buy?");
-    submenu.interact("Let's buy!", "buyprocess", {
-      do: async (ctx) => {
-        const session = ctx.session;
-        ctx.session = {};
-        await deleteMenuFromContext(ctx);
-        await ctx.answerCbQuery("Buying...\n" + session.url);
-        await this.buyAmazon(session.url, ctx);
-        return true;
-      },
-    });
-    submenu.manualRow(createBackMainMenuButtons("Cancel", null));
-    menuReply.submenu("Buy", "buy", submenu, {
-      hide: async (ctx) => {
-        return ctx.session.type !== "amazon";
-      },
-    });
+    // const submenu = new MenuTemplate<Context>("Do you want to buy?");
+    // submenu.interact("Let's buy!", "buyprocess", {
+    //   do: async (ctx) => {
+    //     const session = ctx.session;
+    //     ctx.session = {};
+    //     await deleteMenuFromContext(ctx);
+    //     await ctx.answerCbQuery("Buying...\n" + session.url);
+    //     await this.buyAmazon(session.url, ctx);
+    //     return true;
+    //   },
+    // });
+    // submenu.manualRow(createBackMainMenuButtons("Cancel", null));
+    // menuReply.submenu("Buy", "buy", submenu, {
+    //   hide: async (ctx) => {
+    //     return ctx.session.type !== "amazon";
+    //   },
+    // });
 
     menuReply.interact("Close", "close", {
       do: async (ctx) => {
@@ -149,72 +154,72 @@ ${url}
     }
   }
 
-  @Command("amazonps5")
-  @OnlyAdmins
-  async checkAwailabilityOnAmazonPS5(ctx: Context) {
-    const url =
-      "https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H95Y452/";
-    const [isAwailable, button, page] = await this.isAmazonAwailable(url);
-    if (isAwailable && button) {
-      ctx.reply("Awailable!");
-      await this.replyWithPhoto(page, ctx);
-      await this.replyWithMenu(url, ctx, "amazon");
-    } else {
-      ctx.reply("No");
-      await this.replyWithMenu(url, ctx);
-    }
-  }
+  // @Command("amazonps5")
+  // @OnlyAdmins
+  // async checkAwailabilityOnAmazonPS5(ctx: Context) {
+  //   const url =
+  //     "https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H95Y452/";
+  //   const [isAwailable, button, page] = await this.isAmazonAwailable(url);
+  //   if (isAwailable && button) {
+  //     ctx.reply("Awailable!");
+  //     await this.replyWithPhoto(page, ctx);
+  //     await this.replyWithMenu(url, ctx, "amazon");
+  //   } else {
+  //     ctx.reply("No");
+  //     await this.replyWithMenu(url, ctx);
+  //   }
+  // }
 
-  @Command("amazonps5digital")
-  @OnlyAdmins
-  async checkAwailabilityOnAmazonPS5Digital(ctx: Context) {
-    const url =
-      "https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H97NYGP/?th=1";
-    const [isAwailable, button, page] = await this.isAmazonAwailable(url);
-    if (isAwailable && button) {
-      ctx.reply("Awailable!");
-      await this.replyWithPhoto(page, ctx);
-      await this.replyWithMenu(url, ctx, "amazon");
-    } else {
-      ctx.reply("No");
-      await this.replyWithMenu(url, ctx);
-    }
-  }
+  // @Command("amazonps5digital")
+  // @OnlyAdmins
+  // async checkAwailabilityOnAmazonPS5Digital(ctx: Context) {
+  //   const url =
+  //     "https://www.amazon.co.uk/PlayStation-9395003-5-Console/dp/B08H97NYGP/?th=1";
+  //   const [isAwailable, button, page] = await this.isAmazonAwailable(url);
+  //   if (isAwailable && button) {
+  //     ctx.reply("Awailable!");
+  //     await this.replyWithPhoto(page, ctx);
+  //     await this.replyWithMenu(url, ctx, "amazon");
+  //   } else {
+  //     ctx.reply("No");
+  //     await this.replyWithMenu(url, ctx);
+  //   }
+  // }
 
-  @Command("amazonorders")
-  @OnlyAdmins
-  async checkAmazonOrders(ctx: Context) {
-    return await this.replyWithScreenshot(
-      "https://www.amazon.co.uk/gp/css/order-history?ref_=nav_orders_first",
-      ctx
-    );
-  }
+  // @Command("amazonorders")
+  // @OnlyAdmins
+  // async checkAmazonOrders(ctx: Context) {
+  //   return await this.replyWithScreenshot(
+  //     "https://www.amazon.co.uk/gp/css/order-history?ref_=nav_orders_first",
+  //     ctx
+  //   );
+  // }
 
-  async buyAmazon(url: string, ctx: Context) {
-    const [, buyButton, page] = await this.isAmazonAwailable(url);
-    if (buyButton) {
-      await buyButton.click();
-      await page.waitForSelector("iframe#turbo-checkout-iframe");
-      let iframe = await page.$("iframe#turbo-checkout-iframe");
-      const frame = await iframe.contentFrame();
-      await frame.waitForNavigation({
-        waitUntil: "networkidle0",
-      });
-      await frame.waitForSelector("#turbo-checkout-place-order-button");
-      await this.replyWithPhoto(page, ctx);
-      const [placeOrderButton] = await frame.$x(
-        "//*[@id='turbo-checkout-place-order-button'][contains(., 'Place your order')]"
-      );
-      placeOrderButton.click();
-      await frame.waitForNavigation({
-        waitUntil: "networkidle0",
-      });
-      await this.replyWithPhoto(page, ctx);
-    } else {
-      ctx.reply("No");
-      await this.replyWithPhoto(page, ctx);
-    }
-  }
+  // async buyAmazon(url: string, ctx: Context) {
+  //   const [, buyButton, page] = await this.isAmazonAwailable(url);
+  //   if (buyButton) {
+  //     await buyButton.click();
+  //     await page.waitForSelector("iframe#turbo-checkout-iframe");
+  //     let iframe = await page.$("iframe#turbo-checkout-iframe");
+  //     const frame = await iframe.contentFrame();
+  //     await frame.waitForNavigation({
+  //       waitUntil: "networkidle0",
+  //     });
+  //     await frame.waitForSelector("#turbo-checkout-place-order-button");
+  //     await this.replyWithPhoto(page, ctx);
+  //     const [placeOrderButton] = await frame.$x(
+  //       "//*[@id='turbo-checkout-place-order-button'][contains(., 'Place your order')]"
+  //     );
+  //     placeOrderButton.click();
+  //     await frame.waitForNavigation({
+  //       waitUntil: "networkidle0",
+  //     });
+  //     await this.replyWithPhoto(page, ctx);
+  //   } else {
+  //     ctx.reply("No");
+  //     await this.replyWithPhoto(page, ctx);
+  //   }
+  // }
 
   async getPage(browser: pup.Browser, url: string) {
     const page = await browser.newPage();
@@ -222,27 +227,25 @@ ${url}
       timeout: 30000,
     });
 
-    const hasRestoredSessionCookies = await this.browserCookieSessionService.restoreCookieSession(
-      page
-    );
+    // const hasRestoredSessionCookies = await this.browserCookieSessionService.restoreCookieSession(
+    //   page
+    // );
 
-    if (!hasRestoredSessionCookies) {
-      console.error("Failed to restore cookies!");
-      return null;
-    }
+    // if (!hasRestoredSessionCookies) {
+    //   console.error("Failed to restore cookies!");
+    //   return null;
+    // }
 
     return page;
   }
 
-  async replyWithScreenshot(url: string, ctx: Context) {
-    const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
-
-    if (!hasRestoredSession) {
-      ctx.reply("Failed to restore the browser session!");
-      return false;
+  async launchBrowser() {
+    if (BROWSER_URL) {
+      return await pup.connect({
+        browserWSEndpoint: BROWSER_URL,
+      });
     }
-
-    const browser = await puppeteer.use(StealthPlugin()).launch({
+    return await puppeteer.use(StealthPlugin()).launch({
       executablePath: BROWSER_PATH,
       args: BROWSER_ARGS,
       defaultViewport: {
@@ -251,8 +254,20 @@ ${url}
       },
       userDataDir: USER_FOLDER,
     });
+  }
+
+  async replyWithScreenshot(url: string, ctx: Context) {
+    // const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
+
+    // if (!hasRestoredSession) {
+    //   ctx.reply("Failed to restore the browser session!");
+    //   return false;
+    // }
+
+    let browser: pup.Browser;
 
     try {
+      browser = await this.launchBrowser();
       const page = await this.getPage(browser, url);
 
       if (!page) {
@@ -269,7 +284,9 @@ ${url}
       console.error(e);
       return false;
     } finally {
-      await browser.close();
+      if (browser != null) {
+        await browser.close();
+      }
     }
   }
 
@@ -277,25 +294,17 @@ ${url}
     url: string,
     callback: (page: pup.Page) => Promise<void>
   ): Promise<void> {
-    const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
+    // const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
 
-    if (!hasRestoredSession) {
-      console.error("Failed to restore the browser session!");
-      throw new Error("Failed to restore the browser session!");
-    }
+    // if (!hasRestoredSession) {
+    //   console.error("Failed to restore the browser session!");
+    //   throw new Error("Failed to restore the browser session!");
+    // }
 
     let browser: pup.Browser;
 
     try {
-      browser = await puppeteer.use(StealthPlugin()).launch({
-        executablePath: BROWSER_PATH,
-        args: BROWSER_ARGS,
-        defaultViewport: {
-          width: 1024,
-          height: 1024,
-        },
-        userDataDir: USER_FOLDER,
-      });
+      browser = await this.launchBrowser();
       const page = await this.getPage(browser, url);
       await callback(page);
     } catch (e) {
@@ -309,25 +318,17 @@ ${url}
   }
 
   async pupToText(url: string): Promise<string> {
-    const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
+    // const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
 
-    if (!hasRestoredSession) {
-      console.error("Failed to restore the browser session!");
-      return "";
-    }
+    // if (!hasRestoredSession) {
+    //   console.error("Failed to restore the browser session!");
+    //   return "";
+    // }
 
     let browser: pup.Browser;
 
     try {
-      browser = await puppeteer.use(StealthPlugin()).launch({
-        executablePath: BROWSER_PATH,
-        args: BROWSER_ARGS,
-        defaultViewport: {
-          width: 1024,
-          height: 1024,
-        },
-        userDataDir: USER_FOLDER,
-      });
+      browser = await this.launchBrowser();
       const page = await this.getPage(browser, url);
       return await page.content();
     } catch (e) {
@@ -340,54 +341,49 @@ ${url}
     }
   }
 
-  async isAmazonAwailable(
-    url: string
-  ): Promise<[boolean, pup.ElementHandle<Element>, pup.Page]> {
-    const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
+  // async isAmazonAwailable(
+  //   url: string
+  // ): Promise<[boolean, pup.ElementHandle<Element>, pup.Page]> {
+  //   const hasRestoredSession = await this.browserCookieSessionService.restoreSession();
 
-    if (!hasRestoredSession) {
-      console.error("Failed to restore the browser session!");
-      return [false, null, null];
-    }
+  //   if (!hasRestoredSession) {
+  //     console.error("Failed to restore the browser session!");
+  //     return [false, null, null];
+  //   }
 
-    const browser = await puppeteer.use(StealthPlugin()).launch({
-      executablePath: BROWSER_PATH,
-      args: BROWSER_ARGS,
-      defaultViewport: {
-        width: 1024,
-        height: 1024,
-      },
-      userDataDir: USER_FOLDER,
-    });
+  //   let browser: pup.Browser;
 
-    try {
-      const page = await this.getPage(browser, url);
+  //   try {
+  //     browser = await this.launchBrowser();
+  //     const page = await this.getPage(browser, url);
 
-      if (!page) {
-        return [false, null, null];
-      }
+  //     if (!page) {
+  //       return [false, null, null];
+  //     }
 
-      await page.reload();
+  //     await page.reload();
 
-      const [awailabilityElement] = await page.$x(
-        "//*[@id='availability'][contains(., 'Currently unavailable.')]"
-      );
-      if (awailabilityElement) {
-        return [false, null, page];
-      }
+  //     const [awailabilityElement] = await page.$x(
+  //       "//*[@id='availability'][contains(., 'Currently unavailable.')]"
+  //     );
+  //     if (awailabilityElement) {
+  //       return [false, null, page];
+  //     }
 
-      const [button] = await page.$x(
-        "//*[@id='buyNow'][contains(., 'Buy Now')]"
-      );
+  //     const [button] = await page.$x(
+  //       "//*[@id='buyNow'][contains(., 'Buy Now')]"
+  //     );
 
-      return [true, button, page];
-    } catch (e) {
-      console.error(e);
-      return [false, null, null];
-    } finally {
-      await browser.close();
-    }
-  }
+  //     return [true, button, page];
+  //   } catch (e) {
+  //     console.error(e);
+  //     return [false, null, null];
+  //   } finally {
+  //     if (browser != null) {
+  //       await browser.close();
+  //     }
+  //   }
+  // }
 
   async replyWithPhoto(page: pup.Page, ctx: Context) {
     const screenshot = await page.screenshot({
