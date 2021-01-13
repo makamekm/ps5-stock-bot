@@ -42,7 +42,10 @@ export class TelegramStonkService {
     } catch (e) {
       this.chatIds = [];
     }
-    await this.notifyAllSubscribers("The system has been upgraded!");
+    await this.notifyAllSubscribers(
+      "The system has been upgraded!",
+      ADMIN_CHATIDS
+    );
   }
 
   async saveSubscriptions() {
@@ -251,9 +254,9 @@ export class TelegramStonkService {
     );
   }
 
-  async notifyAllSubscribers(message: string) {
+  async notifyAllSubscribers(message: string, chatIds?: number[]) {
     await Promise.all(
-      this.chatIds.map((chatId) =>
+      (chatIds || this.chatIds).map((chatId) =>
         this.reflect(this.bot.telegram.sendMessage(chatId, message), chatId)
       )
     );
@@ -262,10 +265,11 @@ export class TelegramStonkService {
   async notifyAllSubscribersWithMarkdownInlineKeyboard(
     message: string,
     keyboard: any[],
-    onlyAdmins = true
+    onlyAdmins = true,
+    chatIds?: number[]
   ) {
     await Promise.all(
-      this.chatIds.map((chatId) =>
+      (chatIds || this.chatIds).map((chatId) =>
         this.reflect(
           !onlyAdmins ||
             ADMIN_CHATIDS.find((id) => id === Number(chatId)) != null
