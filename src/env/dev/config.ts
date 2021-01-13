@@ -30,6 +30,7 @@ export const BROWSER_ARGS = [
         "--no-first-run",
         "--no-zygote",
         "--single-process",
+        "--disable-accelerated-2d-canvas",
       ]
     : []),
 ];
