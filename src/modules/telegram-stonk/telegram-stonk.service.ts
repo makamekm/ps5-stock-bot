@@ -221,13 +221,9 @@ export class TelegramStonkService {
   async notifyAllSubscribers(message: string) {
     await Promise.all(
       this.chatIds.map(async (chatId) => {
-        try {
-          await this.bot.telegram.sendMessage(chatId, message);
-        } catch (error) {
-          console.debug(error, chatId);
-          // Suspend error
-        }
-        return Promise.resolve;
+        await this.bot.telegram
+          .sendMessage(chatId, message)
+          .catch((error) => console.debug(error, chatId));
       })
     );
   }
@@ -239,21 +235,18 @@ export class TelegramStonkService {
   ) {
     await Promise.all(
       this.chatIds.map(async (chatId) => {
-        try {
-          !onlyAdmins ||
-          ADMIN_CHATIDS.find((id) => id === Number(chatId)) != null
-            ? await this.bot.telegram.sendMessage(chatId, message, {
+        !onlyAdmins || ADMIN_CHATIDS.find((id) => id === Number(chatId)) != null
+          ? await this.bot.telegram
+              .sendMessage(chatId, message, {
                 reply_markup: {
                   inline_keyboard: keyboard,
                 },
                 parse_mode: "Markdown",
               })
-            : await this.bot.telegram.sendMessage(chatId, message);
-        } catch (error) {
-          console.debug(error, chatId);
-          // Suspend error
-        }
-        return Promise.resolve;
+              .catch((error) => console.debug(error, chatId))
+          : await this.bot.telegram
+              .sendMessage(chatId, message)
+              .catch((error) => console.debug(error, chatId));
       })
     );
   }
