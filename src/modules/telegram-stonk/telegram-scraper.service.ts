@@ -30,7 +30,7 @@ import { availibilityScenarious } from "./availability.scenarious";
 export class TelegramScraperService {
   constructor(
     @InjectBot() private bot: TelegrafProvider,
-    // private browserCookieSessionService: BrowserCookieSessionService,
+    private browserCookieSessionService: BrowserCookieSessionService,
     private telegramStonkService: TelegramStonkService,
     private telegramActionService: TelegramActionService,
     private telegramFetchService: TelegramFetchService
@@ -227,14 +227,14 @@ ${url}
       timeout: 30000,
     });
 
-    // const hasRestoredSessionCookies = await this.browserCookieSessionService.restoreCookieSession(
-    //   page
-    // );
+    const hasRestoredSessionCookies = await this.browserCookieSessionService.restoreCookieSession(
+      page
+    );
 
-    // if (!hasRestoredSessionCookies) {
-    //   console.error("Failed to restore cookies!");
-    //   return null;
-    // }
+    if (!hasRestoredSessionCookies) {
+      console.error("Failed to restore cookies!");
+      return null;
+    }
 
     return page;
   }
