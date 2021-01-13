@@ -54,7 +54,7 @@ export const availibilityScenarious: {
     name: "PS5 MEDIAMARKT",
     url: "https://mediamarkt.pl/konsole-i-gry/konsola-sony-playstation-5",
     checkCorrectness: ($) => $(".b-ofr_headDataTitle").length !== 0,
-    checkMatch: ($, text) => text.includes("PlayStation 5"),
+    checkMatch: ($) => $("#js-addToCart").length !== 0,
     usePuppeteer: true,
   },
   {
