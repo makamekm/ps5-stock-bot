@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 
-import Title from "~/components/Title";
+import { Title } from "~/components/Title";
 import { CORS } from "@env/config";
 
 const Home: React.FC = () => (
@@ -55,7 +55,7 @@ const Home: React.FC = () => (
 
     <footer>
       <a href="https://zeit.co" target="_blank" rel="noopener noreferrer">
-        Powered by <img src="/zeit.svg" alt="ZEIT Logo" />
+        Powered by makamekm
       </a>
     </footer>
 

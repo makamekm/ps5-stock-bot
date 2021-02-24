@@ -4,17 +4,11 @@ import { PUBLIC_FOLDER } from "@env/config";
 import { NextMiddleware, NextModule } from "@nestpress/next";
 import { NextController } from "./next.controller";
 import { FrontendMiddleware } from "./frontend.middleware";
-import { TelegrafModule } from "nestjs-telegraf";
-import { TelegramStonkModule } from "./modules/telegram-stonk/telegram-stonk.module";
 import { ScheduleModule } from "@nestjs/schedule";
-import { TELEGRAM_BOT_KEY } from "@env/config";
 
 @Module({
   imports: [
     NextModule,
-    TelegrafModule.forRoot({
-      token: TELEGRAM_BOT_KEY,
-    }),
     ServeStaticModule.forRoot({
       rootPath: PUBLIC_FOLDER,
       serveRoot: "/asset/",
@@ -22,7 +16,6 @@ import { TELEGRAM_BOT_KEY } from "@env/config";
       // exclude: ["/api/*"],
     }),
     ScheduleModule.forRoot(),
-    TelegramStonkModule,
   ],
   controllers: [NextController],
   providers: [],

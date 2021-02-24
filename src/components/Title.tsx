@@ -1,6 +1,6 @@
 import React from "react";
 
-const Title: React.FC = () => (
+export const Title: React.FC = () => (
   <>
     <h1 className="title">
       Welcome to <a href="https://nextjs.org">Next.js!</a>
@@ -26,5 +26,3 @@ const Title: React.FC = () => (
     </style>
   </>
 );
-
-export default Title;
