@@ -150,7 +150,8 @@
     "*.{tsx,ts}": [
       "eslint --fix",
       "prettier --write",
-      "jest --findRelatedTests"
+      "jest --preset ts-jest --testPathIgnorePatterns .*\\.test\\.tsx$ --findRelatedTests",
+      "jest --testPathIgnorePatterns .*\\.test\\.ts$ --findRelatedTests"
     ]
   },
   "release": {
